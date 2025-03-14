@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+//import 'package:google_fonts/google_fonts.dart';
 import 'package:selller/main.dart';
 import 'package:selller/prac.dart';
+import 'package:http/http.dart'as http;
 
 class additem extends StatefulWidget {
   const additem({super.key});
@@ -11,38 +14,116 @@ class additem extends StatefulWidget {
 }
 
 class _additemState extends State<additem> {
+  static const String baseUrl = "http://192.168.100.239:5000";
+  dynamic expirydate;
+  TextEditingController ProductName = TextEditingController();
+  TextEditingController ProductType = TextEditingController();
+  TextEditingController ProductQuantity = TextEditingController();
+  TextEditingController ProductPrice = TextEditingController();
+  TextEditingController ProductDescription = TextEditingController();
+  TextEditingController ProductExpiryDate = TextEditingController();
+   @override
+  void initState() {
+    super.initState();
+    fetchexpiry();
+  }
+   Future<void> sendDataToFlask() async {
+     const String baseUrl = "http://192.168.100.239:5000";
+    try {
+      
+      final response = await http.post(
+        Uri.parse('$baseUrl/add_product'),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({
+          "ProductName": ProductName.text,
+          "ProductType": ProductType.text,
+          "ProductQuantity": ProductQuantity.text,
+          "ProductPrice": ProductPrice.text,
+          "ProductDescription": ProductDescription.text,
+          "ProductExpiryDate": ProductExpiryDate.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("Product added successfully: ${response.body}");
+      } else {
+        print("Error: ${response.body}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+  Future<void> fetchexpiry() async {
+    
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/get_expiry'));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+print(data);
+        setState(() {
+          expirydate = data['expiry_date'];
+          print("expiry date");
+          print(expirydate);
+        });
+      } else {
+        print("Error: ${response.body}");
+        
+      }
+    } catch (e) {
+      print("Exception: $e");
+     
+    }
+     
+  }
+ 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: ListView(
         
       
        
         children: [
           Container(
+            color: Color(0xFF8E6CEF),
             
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
+              
+
           children: [
+            
+           
             Text('Add Item',textAlign: TextAlign.center,
-            style:  GoogleFonts.aBeeZee(textStyle:TextStyle(fontSize: 40,fontWeight: FontWeight.w900),),
+           style:  TextStyle(fontSize: 40,fontWeight: FontWeight.w900),
              ),
               SizedBox(width: 10,),
-          Icon(Icons.add,size: 35,weight: 56,)
+          Icon(Icons.store,size: 35,weight: 56,)
           ]
           ),
           
           ),
           SizedBox(height: 10,),
-          Container(
-            child: Column(
+          Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Padding(padding: EdgeInsets.all(5)),
                  TextField(
+                  cursorWidth: 3,
+
                           //controller: "dww",
                           textAlign: TextAlign.left,
+                          controller: ProductName,
                           decoration: InputDecoration(
-                            labelText: 'Item name',
-                            hintText: "Enter Item name",
+                            labelText: 'Product name',
+                            hintText: "Please Enter Product name",
+                            
+
                             focusedBorder: OutlineInputBorder(
     borderSide: BorderSide(color: Colors.green, width: 2.0),
   ),
@@ -56,31 +137,13 @@ class _additemState extends State<additem> {
                           ),
                         ),
                         SizedBox(height: 10),
-                         TextField(
+                        TextField(
                           //controller: nameController,
                           textAlign: TextAlign.left,
+                          controller: ProductType,
                           decoration: InputDecoration(
-                            labelText: 'Price',
-                            hintText: "Enter Price",border: OutlineInputBorder(
-    borderRadius: BorderRadius.circular(12.0),
-    
-  ),
-focusedBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.green, width: 2.0),
-  ),
-  errorBorder: OutlineInputBorder(
-    borderSide: BorderSide(color: Colors.red, width: 2.0),
-  ),filled: true,
-  fillColor: Colors.grey[200],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                         TextField(
-                          //controller: nameController,
-                          textAlign: TextAlign.left,
-                          decoration: InputDecoration(
-                            labelText: "Description",
-                            hintText: 'Enter Description of item',
+                            labelText: "Type",
+                            hintText: 'Enter Type of Product',
                             border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12.0),
   ),
@@ -99,9 +162,34 @@ focusedBorder: OutlineInputBorder(
                          TextField(
                           //controller: nameController,
                           textAlign: TextAlign.left,
+                          controller: ProductPrice,
+                          decoration: InputDecoration(
+                            labelText: 'Price',
+                            hintText: "Enter Price",border: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12.0),
+    
+  ),
+focusedBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.green, width: 2.0),
+  ),
+  errorBorder: OutlineInputBorder(
+    borderSide: BorderSide(color: Colors.red, width: 2.0),
+  ),filled: true,
+  fillColor: Colors.grey[200],
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        
+                         TextField(
+                          //controller: nameController,
+                          textAlign: TextAlign.left,
+                          
+                          controller: ProductExpiryDate,
+                          
                           decoration: InputDecoration(
                             labelText: "Expiry Date",
                             hintText: 'Enter Expiry Date',
+                            helperText: 'Hint: ${expirydate}',
                             border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12.0),
   ),
@@ -120,6 +208,7 @@ focusedBorder: OutlineInputBorder(
                          TextField(
                           //controller: nameController,
                           textAlign: TextAlign.left,
+                          controller: ProductQuantity,
                           decoration: InputDecoration(
                             labelText: 'Quantity',
                             hintText: "Enter Number of items in a box",
@@ -143,9 +232,10 @@ focusedBorder: OutlineInputBorder(
                         TextField(
                           //controller: nameController,
                           textAlign: TextAlign.left,
+                          controller: ProductDescription,
                           decoration: InputDecoration(
-                            labelText: 'Item Description',
-                            hintText: "Enter Item Description",
+                            labelText: 'Product Description',
+                            hintText: "Please Enter Product Description",
                             border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12.0),
   ),
@@ -165,8 +255,8 @@ focusedBorder: OutlineInputBorder(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             ElevatedButton(
-                              onPressed: () {
-                                ();
+                              onPressed: (){
+                                sendDataToFlask();
                                  Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=> MyHomePage()));
                               
                               },
@@ -180,7 +270,8 @@ focusedBorder: OutlineInputBorder(
                        
                         
               ],
-            ),
+            
+      
           ),
           
          

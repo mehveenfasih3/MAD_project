@@ -1,4 +1,4 @@
-# selller
+# seller_frontend
 
 A new Flutter project.
 

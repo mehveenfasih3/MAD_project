@@ -2,11 +2,18 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:selller/SplashScreen.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:selller/additem.dart';
 import 'package:selller/alerts.dart';
 import 'package:selller/prac.dart';
+
 import 'package:http/http.dart'as http;
+
+import 'package:image_picker/image_picker.dart';
+//import 'package:file_picker/file_picker.dart';
+
+
 void main() {
   runApp(const MyApp());
 }
@@ -22,7 +29,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
       ),
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(),
+      home: SplashScreen(),
     );
   }
 }
@@ -38,35 +45,72 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String message = "Waiting for response...";
+  
+File? _selectedimage;
+  
+Future getimagefromcamera() async {
+  final returnedimage = await ImagePicker().pickImage(source: ImageSource.camera);
 
-  Future<void> fetchData() async {
-    final url = Uri.parse("http://127.0.0.1:5000/api?query=Hello");
-
-    try {
-      final response = await http.get(url);
-
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        setState(() {
-          message = data["message"];  
-        });
-      } else {
-        setState(() {
-          message = "Error: ${response.statusCode}";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        message = "Failed to connect: $e";
-      });
-    }
+  if (returnedimage != null) {
+    setState(() {
+      _selectedimage = File(returnedimage.path);
+    });
+  } else {
+    print("No image selected");
   }
+}
 
-  @override
+
+Future getimagefromgallery() async {
+  
+  final returnedimage = await ImagePicker().pickImage(source: ImageSource.gallery);
+print(returnedimage);
+  if (returnedimage != null) {
+    setState(() {
+      _selectedimage = File(returnedimage.path);
+    });
+  } else {
+    print("No image selected");
+  }
+}
+Future<void> sendBarcodeDataToFlask(File? selectedImage) async {
+  const String baseUrl = "http://192.168.100.239:5000";
+
+  try {
+    var request = http.MultipartRequest("POST", Uri.parse('$baseUrl/add_barcode'));
+
+   
+    if (selectedImage != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'image', 
+          selectedImage.path,
+          
+        ),
+      );
+    }
+
+   
+    var streamedResponse = await request.send();
+    var response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 200) {
+      print("Barcode added successfully: ${response.body}");
+    } else {
+      print("Error: ${response.body}");
+    }
+  } catch (e) {
+    print("Exception: $e");
+  }
+}
+
+ @override
   Widget build(BuildContext context) {
       return Scaffold(
-        appBar: AppBar(title: Text('Smart Supply',style:  GoogleFonts.eagleLake(textStyle:TextStyle(fontSize: 24,fontStyle: FontStyle.italic,fontWeight: FontWeight.w900),)
+        appBar: AppBar(
+          
+          
+          title: Text('Smart Supply',style:  TextStyle(fontSize: 24,fontWeight: FontWeight.w900)
         ),
         // actions: [
         //  Image(image: AssetImage('assets/Icons/image.png'),
@@ -81,18 +125,20 @@ class _MyHomePageState extends State<MyHomePage> {
           children: [
             SizedBox(height: 50,),
            
-           Text('Scan Your Item',style:  GoogleFonts.abhayaLibre(textStyle:TextStyle(fontSize: 24,fontStyle: FontStyle.normal,fontWeight: FontWeight.w900),),
+           Text('Scan Your Item',style:  TextStyle(fontSize: 24,fontStyle: FontStyle.normal,fontWeight: FontWeight.w900),
            ),
            Container(
             height: 300,
             width: 300,
             decoration: BoxDecoration(
-            color: Colors.white, // Background color
+            color: Colors.white, 
   border: Border.all(
-    color: Colors.grey, // Border color
-    width: 1.0, // Border width
+    color: Colors.grey, 
+    width: 1.0, 
   ),
-  borderRadius: BorderRadius.circular(12.0), // Rounded corners
+  borderRadius: BorderRadius.circular(12.0), 
+
+  
   boxShadow: [
     BoxShadow(
       color: Colors.black.withOpacity(0.1), 
@@ -102,11 +148,46 @@ class _MyHomePageState extends State<MyHomePage> {
     ),
   ],
             ),
+            
+            
+            child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+               height: 250,
+            width: 300,
+            child:Center(
+              child:  _selectedimage != null? Image.file(_selectedimage!):const Text("Please scan your barcode",textAlign:TextAlign.center,),
+              
+            )
+              )
+            ],
+          
+                 ),
            ),
+            
 SizedBox(height: 10,),
+Row(
+  mainAxisAlignment:MainAxisAlignment.center,
+  children: [
+        
+IconButton(onPressed: (
+  
+){
+  getimagefromgallery();
+}, icon: Icon(Icons.photo,color: const Color.fromARGB(255, 69, 75, 72),),
+iconSize: 30,),
+SizedBox(width: 10,),
+IconButton(onPressed: (
+  
+){
+  getimagefromcamera();
+}, icon: Icon(Icons.camera_alt,color: const Color.fromARGB(255, 69, 75, 72),),
+iconSize: 30,),
+  ]),
            ElevatedButton(
                               onPressed: () {
-                                ();
+                                sendBarcodeDataToFlask(_selectedimage);
                                 Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=> additem()));
                               },
                               child: Text("Scan Now!",style: TextStyle(color: Colors.black),),
@@ -114,12 +195,8 @@ SizedBox(height: 10,),
                                 backgroundColor: Color(0xFF8E6CEF),
                               ),
                             ),
-                             Text(message, style: TextStyle(fontSize: 20)),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: fetchData,
-              child: Text("Get Message from Flask"),
-            ),
+                             
+            
           ]
           )
          ),
@@ -139,7 +216,7 @@ SizedBox(height: 10,),
           children: [
                               CircleAvatar(
                     radius: 30,
-                    backgroundImage: AssetImage('assets/avatar_placeholder.png'), // Placeholder for profile pic
+                    // backgroundImage: AssetImage('assets/avatar_placeholder.png'), 
                   ),
                   SizedBox(height: 10),
                   Text(
@@ -206,5 +283,3 @@ SizedBox(height: 10,),
   }
 }
 
-class Scanning {
-}
