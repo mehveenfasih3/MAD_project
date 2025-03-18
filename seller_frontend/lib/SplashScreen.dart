@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:selller/main.dart';
+import 'package:selller/seller_login.dart';
+import 'package:selller/seller_registration.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -18,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     
     Timer(Duration(seconds: 4),(){Navigator.pushReplacement(
 context,
-MaterialPageRoute(builder: (context)=> MyHomePage()));
+MaterialPageRoute(builder: (context)=> LoginPage()));
     
     
     }

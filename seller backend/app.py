@@ -2,13 +2,23 @@ from flask import Flask, request, jsonify, render_template, redirect, url_for, s
 from flask_mysqldb import MySQL
 import bcrypt
 import os
+from PIL import Image
 from werkzeug.utils import secure_filename
-
+from pyzbar.pyzbar import decode
 import cv2 as cv2
 import pytesseract
 import re
 from datetime import datetime
 from flask_cors import CORS
+import cloudinary
+import cloudinary.uploader
+      
+cloudinary.config( 
+    cloud_name = "djeipse9i", 
+    api_key = "515717114637578", 
+    api_secret = "8AGTfR4RUcjooVD_CZey9Y37Kuw",
+    secure=True
+)
 UPLOAD_FOLDER = "uploads"  
 
 
@@ -30,47 +40,63 @@ expiry_date_global="None"
 @app.route('/add_product', methods=['POST'])
 def add_product():
     try:
-        data = request.get_json()
-
        
-        product_name = data.get('ProductName')
-        product_type = data.get('ProductType')
-        product_quantity = data.get('ProductQuantity')
-        product_price = data.get('ProductPrice')
-        product_description = data.get('ProductDescription')
-        product_expiry_date = data.get('ProductExpiryDate')
-        print(product_description,product_name,product_expiry_date,product_price,product_quantity,product_type)
+        product_name = request.form.get('ProductName')
+        product_type = request.form.get('ProductType')
+        product_quantity = request.form.get('ProductQuantity')
+        product_price = request.form.get('ProductPrice')
+        product_description = request.form.get('ProductDescription')
+        product_expiry_date = request.form.get('ProductExpiryDate')
+
+        
         if not all([product_name, product_type, product_quantity, product_price, product_description, product_expiry_date]):
             return jsonify({"status": "error", "message": "All fields are required"}), 400
 
+        
+        product_image_path = None
+        
+        if 'ProductImage' in request.files:
+            product_image = request.files['ProductImage']
+            upload_result = cloudinary.uploader.upload(product_image) 
+            product_image_path=upload_result['secure_url'] 
+           
+        
         cursor = mysql.connection.cursor()
-        
-        
+
         cursor.execute("SELECT MAX(ProductId) FROM product")
         last_id = cursor.fetchone()[0]
         new_id = last_id + 1 if last_id else 1  
-        
+
+       
         query = """
         INSERT INTO product (ProductId, ProductName, ProductType, ProductPrice, 
                               ProductQuantity, ProductDescription, ProductExpiryDate, 
                               ProductPayment, ProductImage, SellerId, ProductDiscount) 
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        product_data=(new_id, product_name, product_type, product_price,product_quantity, product_description, product_expiry_date,'false', 'https://www.banana.jpg', 1, 0.00)
+        product_data = (
+            new_id, product_name, product_type, product_price, 
+            product_quantity, product_description, product_expiry_date,
+            'false', product_image_path, 1, 0.00
+        )
       
-        cursor.execute(query,product_data)  
+        cursor.execute(query, product_data)  
         mysql.connection.commit()
         cursor.close()
+
         print(f"Product inserted successfully with ProductId: {new_id}")
              
         return jsonify({
             "status": "success",
             "message": "Product added successfully",
-            "ProductId": new_id
+            "ProductId": new_id,
+            "ProductImagePath": product_image_path if product_image_path else "No image uploaded"
         }), 201
 
     except Exception as e:
         print("Error inserting product:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 
 @app.route('/add_barcode', methods=['POST'])
@@ -112,7 +138,15 @@ def cv(image):
     print("Received image path: ", image)
     
    
-    image=cv2.imread(image)
+    image=cv2.imread('uploads/78f42b5f-6561-44e5-a0cd-e521ba97e6ee9125722942604037949.jpg')
+#     image = Image.open(image_path)
+
+# # Decode the barcode
+#     decoded_objects = decode(image)
+
+#     for obj in decoded_objects:
+#      print("Decoded Data:", obj.data.decode("utf-8"))
+    
     if image is None:
         print("Error: Could not load image. Check the file path!")
         return
@@ -166,20 +200,7 @@ def get_expiry():
     else:
         return jsonify({"status": "error", "message": "No expiry date provided"}), 400
 
-# def get_expiry(expiry_date):
-#     try:
-#         expirydate = request.args.get("expiry_date", expiry_date)  
-#         return jsonify({"status": "success", "expiry_date": expirydate}), 200
-#     except Exception as e:
-#         return jsonify({"status": "error", "message": str(e)}), 500
 
-# @app.route('/get_expiry', methods=['GET'])
-# def get_expiry(expiry_date):
-#     try:
-#      return jsonify({"status": "success", "data": expiry_date}), 200
-
-#     except Exception as e:
-#         return jsonify({"status": "error", "message": str(e)})
 
 
 @app.route('/get_products', methods=['GET'])

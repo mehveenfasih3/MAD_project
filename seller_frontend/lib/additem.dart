@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 //import 'package:google_fonts/google_fonts.dart';
 import 'package:selller/main.dart';
-import 'package:selller/prac.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart'as http;
 
 class additem extends StatefulWidget {
@@ -14,8 +15,11 @@ class additem extends StatefulWidget {
 }
 
 class _additemState extends State<additem> {
+  File? _selectedimage;
   static const String baseUrl = "http://192.168.100.239:5000";
   dynamic expirydate;
+ 
+  
   TextEditingController ProductName = TextEditingController();
   TextEditingController ProductType = TextEditingController();
   TextEditingController ProductQuantity = TextEditingController();
@@ -27,31 +31,52 @@ class _additemState extends State<additem> {
     super.initState();
     fetchexpiry();
   }
+  
    Future<void> sendDataToFlask() async {
      const String baseUrl = "http://192.168.100.239:5000";
-    try {
+    // try {
       
-      final response = await http.post(
-        Uri.parse('$baseUrl/add_product'),
-        headers: {"Content-Type": "application/json"},
-        body: json.encode({
-          "ProductName": ProductName.text,
-          "ProductType": ProductType.text,
-          "ProductQuantity": ProductQuantity.text,
-          "ProductPrice": ProductPrice.text,
-          "ProductDescription": ProductDescription.text,
-          "ProductExpiryDate": ProductExpiryDate.text,
-        }),
-      );
+    //   final response = await http.post(
+    //     Uri.parse('$baseUrl/add_product'),
+    //     headers: {"Content-Type": "application/json"},
+    //     body: json.encode({
+    //       "ProductName": ProductName.text,
+    //       "ProductType": ProductType.text,
+    //       "ProductQuantity": ProductQuantity.text,
+    //       "ProductPrice": ProductPrice.text,
+    //       "ProductDescription": ProductDescription.text,
+    //       "ProductExpiryDate": ProductExpiryDate.text,
+    //       "ProductImage": _selectedimage?.path,
+    //     }),
+    //   );
+      var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/add_product'));
 
-      if (response.statusCode == 200) {
-        print("Product added successfully: ${response.body}");
-      } else {
-        print("Error: ${response.body}");
-      }
-    } catch (e) {
-      print("Exception: $e");
+  // Add other fields
+    request.fields['ProductName'] = ProductName.text;
+    request.fields['ProductType'] = ProductType.text;
+    request.fields['ProductQuantity'] = ProductQuantity.text;
+    request.fields['ProductPrice'] = ProductPrice.text;
+    request.fields['ProductDescription'] = ProductDescription.text;
+    request.fields['ProductExpiryDate'] = ProductExpiryDate.text;
+
+    // Attach image file
+    if (_selectedimage != null) {
+      request.files.add(await http.MultipartFile.fromPath(
+        'ProductImage',  // This must match the key Flask expects
+        _selectedimage!.path,
+      ));
     }
+
+  var response = await request.send();
+  
+      if (response.statusCode == 200) {
+        print("Product added successfully: ");
+      } else {
+        print("Error: ");
+      }
+    // } catch (e) {
+    //   print("Exception: $e");
+    // }
   }
   Future<void> fetchexpiry() async {
     
@@ -77,7 +102,18 @@ print(data);
      
   }
  
-
+Future getimagefromgallery() async {
+  
+  final returnedimage = await ImagePicker().pickImage(source: ImageSource.gallery);
+print(returnedimage);
+  if (returnedimage != null) {
+    setState(() {
+      _selectedimage = File(returnedimage.path);
+    });
+  } else {
+    print("No image selected");
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +149,40 @@ print(data);
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(padding: EdgeInsets.all(5)),
+                
+                 Container(
+                  height: 150,
+                  width: 150,
+                  decoration: BoxDecoration(
+                     color: Colors.grey[200],
+                    border: Border.all(
+    color: Colors.grey, 
+    width: 1.0, 
+  ),
+  borderRadius: BorderRadius.circular(150.0), 
+boxShadow: [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.1), 
+      spreadRadius: 2, 
+      blurRadius: 8, 
+      offset: Offset(4, 4), 
+    ),
+  ],
+            ),
+            
+      
+                  
+                   child:Center(
+                    
+              child:  _selectedimage != null? Image.file(_selectedimage!):const Text("Upload Product Image",textAlign:TextAlign.center,),
+              
+            )
+              ),IconButton(onPressed: (
+  
+){
+  getimagefromgallery();
+}, icon: Icon(Icons.photo,color: const Color.fromARGB(255, 69, 75, 72),),
+iconSize: 30,),
                  TextField(
                   cursorWidth: 3,
 
