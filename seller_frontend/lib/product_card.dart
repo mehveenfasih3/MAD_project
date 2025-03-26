@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class ProductCard extends StatelessWidget {
   final String imageUrl;
   final String title;
+  final String type;
   final double price;
   final double? discount;
   final String description;
@@ -12,6 +13,7 @@ class ProductCard extends StatelessWidget {
     super.key,
     required this.imageUrl,
     required this.title,
+    required this.type,
     required this.price,
     this.discount,
     required this.onAddDiscount,
@@ -34,32 +36,34 @@ class ProductCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Product Image
-              ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(12),
-                  topRight: Radius.circular(12),
-                ),
-                child: Image.network(
-                  imageUrl,
-                  height: constraints.maxHeight * 0.5,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: constraints.maxHeight * 0.5,
-                      color: Colors.grey[300],
-                      child: const Center(child: Icon(Icons.error)),
-                    );
-                  },
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                  child: Image.network(
+                    imageUrl,
+                    height: constraints.maxHeight * 0.5,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: constraints.maxHeight * 0.5,
+                        color: Colors.grey[300],
+                        child: const Center(child: Icon(Icons.error)),
+                      );
+                    },
+                  ),
                 ),
               ),
-
-              // Product Title
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6),
+              
+                
+ Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6),
                 child: Text(
-                  title,
+                  title ,
                   style: TextStyle(
                     fontSize: fontSize,
                     fontWeight: FontWeight.bold,
@@ -68,8 +72,23 @@ class ProductCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-
-              // Product Description
+             
+               Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6),
+                child: Text(
+                  type ,
+                  style: TextStyle(
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+                
+            
+             
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
@@ -82,10 +101,9 @@ class ProductCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-
-              // Price and Discount Section
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 2.0, vertical:2),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -94,28 +112,31 @@ class ProductCard extends StatelessWidget {
                       children: [
                         if (discount != null && discount! > 0) ...[
                           Text(
-                            '\$${price.toStringAsFixed(2)}',
+                            '${price.toStringAsFixed(2)} Rs',
                             style: TextStyle(
                               fontSize: fontSize * 0.9,
                               color: Colors.grey,
                               decoration: TextDecoration.lineThrough,
+                                overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Text(
-                            '\$${discountedPrice.toStringAsFixed(2)}',
+                            '${discountedPrice.toStringAsFixed(2)}Rs',
                             style: TextStyle(
-                              fontSize: fontSize * 1.1,
+                              fontSize: fontSize,
                               color: Colors.red,
                               fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ] else
                           Text(
-                            '\$${price.toStringAsFixed(2)}',
+                            '${price.toStringAsFixed(2)}Rs',
                             style: TextStyle(
                               fontSize: fontSize * 1.1,
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
                             ),
                           ),
                       ],
@@ -123,30 +144,30 @@ class ProductCard extends StatelessWidget {
                   ],
                 ),
               ),
-
-              Align(
-                alignment: Alignment.center,
-                child: ElevatedButton(
-                  onPressed: onAddDiscount,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: onAddDiscount,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
-                  ),
-                  child: const Text(
-                    'Add Discount',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
+                    child: Text(
+                      'Add Discount',
+                      style: TextStyle(
+                        fontSize: fontSize * 0.8,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
               ),
-
-              const SizedBox(height: 10),
             ],
           ),
         );

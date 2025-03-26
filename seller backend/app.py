@@ -1,5 +1,7 @@
 from flask import Flask, request, jsonify, render_template, redirect, url_for, send_file
 from flask_mysqldb import MySQL
+from collections import defaultdict
+
 import bcrypt
 import os
 from PIL import Image
@@ -37,10 +39,12 @@ if not mysql:
     print("Error: MySQL connection not established!")
     exit()
 expiry_date_global="None"
+seller_id_global="None"
 @app.route('/add_product', methods=['POST'])
 def add_product():
     try:
-       
+        global seller_id_global
+        print(" Add product" ,seller_id_global)
         product_name = request.form.get('ProductName')
         product_type = request.form.get('ProductType')
         product_quantity = request.form.get('ProductQuantity')
@@ -77,7 +81,7 @@ def add_product():
         product_data = (
             new_id, product_name, product_type, product_price, 
             product_quantity, product_description, product_expiry_date,
-            'false', product_image_path, 1, 0.00
+            'false', product_image_path, seller_id_global, 0.00
         )
       
         cursor.execute(query, product_data)  
@@ -138,7 +142,7 @@ def cv(image):
     print("Received image path: ", image)
     
    
-    image=cv2.imread('uploads/78f42b5f-6561-44e5-a0cd-e521ba97e6ee9125722942604037949.jpg')
+    image=cv2.imread('sample3.png')
 #     image = Image.open(image_path)
 
 # # Decode the barcode
@@ -203,12 +207,15 @@ def get_expiry():
 
 
 
-@app.route('/get_products', methods=['GET'])
-def get_products():
+
+@app.route('/get_sellers_information', methods=['GET'])
+def get_sellers_information():
     try:
+        global seller_id_global
+        print("drawer",seller_id_global)
         cursor = mysql.connection.cursor()
-        query = "SELECT *,DATE_FORMAT(ProductExpiryDate, '%Y-%m-%d') AS FormattedExpiryDate, DATEDIFF(ProductExpiryDate,CURDATE()) AS Days FROM product WHERE DATEDIFF(ProductExpiryDate,CURDATE()) >= 10;"
-        cursor.execute(query)
+        query = """SELECT * FROM seller WHERE SellerId = %s;"""
+        cursor.execute(query,(seller_id_global,))
 
        
         products = cursor.fetchall()
@@ -228,9 +235,333 @@ def get_products():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
+@app.route('/get_products', methods=['GET'])
+def get_products():
+    try:
+        global seller_id_global
+        seller_id_global
+        print("alerts",seller_id_global)
+        print("SellerId Type:", type(seller_id_global), "Value:", seller_id_global)
+
+        cursor = mysql.connection.cursor()
+        # query = """SELECT *,DATE_FORMAT(ProductExpiryDate, '%Y-%m-%d') AS FormattedExpiryDate, DATEDIFF(ProductExpiryDate,CURDATE()) AS Days FROM product WHERE DATEDIFF(ProductExpiryDate,CURDATE()) >= 10 AND SellerId = 1;"""
+        # cursor.execute(query)
+        query = """SELECT *, DATE_FORMAT(ProductExpiryDate, '%%Y-%%m-%%d') AS FormattedExpiryDate, 
+                   DATEDIFF(ProductExpiryDate, CURDATE()) AS Days 
+                   FROM product WHERE DATEDIFF(ProductExpiryDate, CURDATE())BETWEEN 1 AND 7 
+                   AND SellerId = %s;"""
+
+        final_query = query.replace("%s", str(seller_id_global))  # Debugging
+        print("Executing Query:", final_query)
+
+        cursor.execute(query, (seller_id_global,))
+        # print("alerts",seller_id_global)
+        # cursor.execute(query, (seller_id_global,))
+
+       
+        products = cursor.fetchall()
+        column_names = [desc[0] for desc in cursor.description]
+        
+        cursor.close()  
+        
+        
+        product_list = [dict(zip(column_names, row)) for row in products]
+
+       
+        for product in product_list:
+            print(product)  
+
+        return jsonify({"status": "success", "data": product_list}), 200
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+    
+
+
+@app.route('/get_orders', methods=['GET'])
+def get_orders():
+    try:
+        global seller_id_global
+        seller_id_global
+        print(seller_id_global)
+        cur = mysql.connection.cursor()
+        query = """SELECT 
+            o.OrderId,
+            DATE_FORMAT(o.OrderDateTime, '%%Y-%%m-%%d') AS OrderDateTime,
+            o.RetailerId,
+            r.RetailerEmail,
+            o.TotalPrice,
+            od.ProductId,
+            p.ProductName
+
+        FROM `order` o
+        JOIN retailer r ON o.RetailerId = r.RetailerId
+        JOIN orderdetail od ON o.OrderId = od.OrderId
+        JOIN product p ON od.ProductId = p.ProductId
+        WHERE p.SellerId=%s
+
+        """
+        final_query = query.replace("%s", str(seller_id_global))  # Debugging
+        print("Executing Query:", final_query)
+
+        cur.execute(query,(seller_id_global,))
+        orders = cur.fetchall()
+        cur.close()
+        
+        grouped_orders = defaultdict(lambda: {
+            "OrderId": None,
+            "OrderDateTime": None,
+            "RetailerId": None,
+            "RetailerEmail": None,
+            "TotalPrice": None,
+            "Products": []
+        })
+        
+        for order in orders:
+            order_id = order[0]
+            if not grouped_orders[order_id]["OrderId"]:
+                grouped_orders[order_id].update({
+                    "OrderId": order[0],
+                    "OrderDateTime": order[1],
+                    "RetailerId": order[2],
+                    "RetailerEmail": order[3],
+                    "TotalPrice": order[4]
+                })
+            grouped_orders[order_id]["Products"].append({
+                "ProductId": order[5],
+                "ProductName": order[6]
+            })
+        
+        return jsonify(list(grouped_orders.values())), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)})
+@app.route('/get_own_products', methods=['GET'])
+def get_own_products():
+    try:
+        global seller_id_global
+        cur = mysql.connection.cursor()
+        query = """SELECT 
+            ProductId,
+            ProductName,
+            ProductType,
+            ProductPrice,
+            ProductQuantity,
+            ProductDescription,
+            ProductExpiryDate,
+            ProductDiscount,
+            ProductImage
+        FROM product
+        WHERE ProductExpiryDate>CURDATE() AND ProductPayment="false" AND SellerId=%s;
+        """
+        final_query = query.replace("%s", str(seller_id_global))  # Debugging
+        print("Executing Query:", final_query)
+
+        cur.execute(query, (seller_id_global,))
+        
+        #cur.execute(query)
+        products = cur.fetchall()
+        cur.close()
+        
+        grouped_products = defaultdict(lambda: {
+            "ProductId": None,
+            "ProductName": None,
+            "ProductType": None,
+            "ProductPrice": None,
+            "ProductQuantity": None,
+            "ProductDescription": None,
+            "ProductExpiryDate": None,
+            "ProductDiscount": None,
+            "ProductImage": None,
+        })
+        
+        for product in products:
+            product_id = product[0]
+            grouped_products[product_id].update({
+                "ProductId": product[0],
+                "ProductName": product[1],
+                "ProductType": product[2],
+                "ProductPrice": product[3],
+                "ProductQuantity": product[4],
+                "ProductDescription": product[5],
+                "ProductExpiryDate": product[6],
+                "ProductDiscount": product[7],
+                "ProductImage": product[8]
+
+            })
+        
+        return jsonify(list(grouped_products.values())), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/update_discount/<int:product_id>', methods=['POST'])
+def update_discount(product_id):
+    try:
+        data = request.get_json()
+        discount = data.get("ProductDiscount")
+        cur = mysql.connection.cursor()
+        cur.execute("UPDATE product SET ProductDiscount = %s WHERE ProductId = %s", (discount, product_id))
+        mysql.connection.commit()
+        cur.close()
+
+        return jsonify(data), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
+    
+
+
+
+@app.route('/api/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+
+    # Extract data from the request
+    factory_name = data.get('factory_name')
+    email = data.get('email')
+    phone = data.get('phone')
+    password = data.get('password')
+    factory_address = data.get('factory_address')
+    account_number = data.get('account_number')
+
+    # Generate a new SellerId
+    seller_id = get_next_seller_id()
+    print(seller_id)
+
+    # Insert data into the database
+    try:
+        cur = mysql.connection.cursor()
+       
+        query = """
+            INSERT INTO seller (SellerId, SellerName, SellerEmail, SellerPassword, SellerLocation)
+            VALUES (%s, %s, %s, %s, %s)
+        """
+        sellerdata=(seller_id, factory_name, email, password, factory_address)
+        cur.execute(query, sellerdata)
+       
+        mysql.connection.commit()
+       
+
+        cur.close()
+       
+        return jsonify({'message': 'Signup successful'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+def get_next_seller_id():
+    
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT MAX(SellerId) FROM seller")
+    max_id = cur.fetchone()[0]
+    cur.close()
+
+    return max_id + 1 if max_id else 1  # Start with 1 if the table is empty
+
+@app.route('/api/seller_login', methods=['POST'])
+def seller_login():
+    data = request.get_json()
+
+    # Extract data from the request
+    email = data.get('email')
+    password = data.get('password')
+
+    # Verify login credentials
+    try:
+        
+        cur = mysql.connection.cursor()
+        query = """
+            SELECT * FROM seller WHERE SellerEmail = %s AND SellerPassword = %s
+        """
+        cur.execute(query, (email, password))
+        seller = cur.fetchone()
+        global seller_id_global
+        seller_id_global=seller[0]
+
+        cur.close()
+        
+
+        if seller:
+            return jsonify({'message': 'Login successful', 'seller': seller}), 200
+        
+        else:
+            return jsonify({'error': 'Invalid email or password'}), 401
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/orders', methods=['GET'])
+def getorders():
+    try:
+        cursor=mysql.connection.cursor()
+        #cursor = connection.cursor(dictionary=True)
+
+        # Fetch all orders with OrderDateTime in ISO 8601 format
+        cursor.execute("""
+            SELECT OrderId, DATE_FORMAT(OrderDateTime, '%Y-%m-%dT%H:%i:%sZ') AS OrderDateTime
+            FROM `order`
+        """)
+        orders = cursor.fetchall()
+
+        cursor.close()
+        #connection.close()
+
+        return jsonify(orders), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+@app.route('/api/product_sales', methods=['GET'])
+def get_product_sales():
+    try:
+        cursor=mysql.connection.cursor()
+        #cursor = connection.cursor(dictionary=True)
+
+        # Get query parameter for period
+        period = request.args.get('period')  # "weekly" or "monthly"
+
+        if period == "weekly":
+            query = """
+                SELECT od.ProductId, COUNT(*) as sales,
+                       WEEKDAY(o.OrderDateTime) as day_of_week
+                FROM orderdetail od
+                JOIN `order` o ON od.OrderId = o.OrderId
+                GROUP BY od.ProductId, WEEKDAY(o.OrderDateTime)
+                
+            """
+        elif period == "monthly":
+            query = """
+                SELECT od.ProductId, COUNT(*) as sales,
+                       MONTH(o.OrderDateTime) as month_of_year
+                FROM orderdetail od
+                JOIN `order` o ON od.OrderId = o.OrderId
+                GROUP BY od.ProductId, MONTH(o.OrderDateTime)
+                
+            """
+        else:
+            # Default to weekly if no period specified
+            query = """
+                SELECT od.ProductId, COUNT(*) as sales,
+                       WEEKDAY(o.OrderDateTime) as day_of_week
+                FROM orderdetail od
+                JOIN `order` o ON od.OrderId = o.OrderId
+                GROUP BY od.ProductId, WEEKDAY(o.OrderDateTime)
+            """
+
+        print(f"Executing query: {query}")
+        cursor.execute(query)
+        product_sales = cursor.fetchall()
+        print(f"Query results: {product_sales}")
+
+        cursor.close()
+        
+
+        return jsonify(product_sales), 200
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 with app.app_context():
    
-    a=get_products()
-    print(a)
+    #a=get_products()
+    response, status_code = get_own_products()  # Unpack tuple
+    print(response.get_json())  
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

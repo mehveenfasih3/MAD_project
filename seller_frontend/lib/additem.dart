@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-//import 'package:google_fonts/google_fonts.dart';
+
 import 'package:selller/main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart'as http;
@@ -18,7 +18,28 @@ class _additemState extends State<additem> {
   File? _selectedimage;
   static const String baseUrl = "http://192.168.100.239:5000";
   dynamic expirydate;
- 
+  bool changedButton = false;
+  final _formkey = GlobalKey<FormState>();
+
+moveToHome(BuildContext context)async{
+   if(_formkey.currentState!.validate()){ 
+      setState(() {
+      changedButton = true;
+
+
+      });
+      sendDataToFlask();
+      await Future.delayed(Duration(seconds: 1));
+      Navigator.pushReplacement(
+context,
+MaterialPageRoute(builder: (context)=> MyHomePage()));
+      setState(() {
+        changedButton = false;
+      });
+      }
+
+}
+
   
   TextEditingController ProductName = TextEditingController();
   TextEditingController ProductType = TextEditingController();
@@ -34,24 +55,9 @@ class _additemState extends State<additem> {
   
    Future<void> sendDataToFlask() async {
      const String baseUrl = "http://192.168.100.239:5000";
-    // try {
-      
-    //   final response = await http.post(
-    //     Uri.parse('$baseUrl/add_product'),
-    //     headers: {"Content-Type": "application/json"},
-    //     body: json.encode({
-    //       "ProductName": ProductName.text,
-    //       "ProductType": ProductType.text,
-    //       "ProductQuantity": ProductQuantity.text,
-    //       "ProductPrice": ProductPrice.text,
-    //       "ProductDescription": ProductDescription.text,
-    //       "ProductExpiryDate": ProductExpiryDate.text,
-    //       "ProductImage": _selectedimage?.path,
-    //     }),
-    //   );
       var request = http.MultipartRequest('POST', Uri.parse('$baseUrl/add_product'));
 
-  // Add other fields
+  
     request.fields['ProductName'] = ProductName.text;
     request.fields['ProductType'] = ProductType.text;
     request.fields['ProductQuantity'] = ProductQuantity.text;
@@ -59,10 +65,10 @@ class _additemState extends State<additem> {
     request.fields['ProductDescription'] = ProductDescription.text;
     request.fields['ProductExpiryDate'] = ProductExpiryDate.text;
 
-    // Attach image file
+    
     if (_selectedimage != null) {
       request.files.add(await http.MultipartFile.fromPath(
-        'ProductImage',  // This must match the key Flask expects
+        'ProductImage',  
         _selectedimage!.path,
       ));
     }
@@ -74,9 +80,7 @@ class _additemState extends State<additem> {
       } else {
         print("Error: ");
       }
-    // } catch (e) {
-    //   print("Exception: $e");
-    // }
+    
   }
   Future<void> fetchexpiry() async {
     
@@ -118,7 +122,14 @@ print(returnedimage);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        
+          child:Form(
+          key:_formkey,
+          child: Column(
+     
         
       
        
@@ -146,7 +157,7 @@ print(returnedimage);
           Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(padding: EdgeInsets.all(5)),
                 
@@ -172,18 +183,32 @@ boxShadow: [
             
       
                   
-                   child:Center(
+                   child:ClipRRect(
                     
-              child:  _selectedimage != null? Image.file(_selectedimage!):const Text("Upload Product Image",textAlign:TextAlign.center,),
+                    borderRadius: BorderRadius.circular(75.0),
+                    
+             child:_selectedimage != null? Image.file(_selectedimage!,width: 150,height: 150,fit: BoxFit.cover,):Center(child: Text("Upload Product Image",textAlign:TextAlign.center,),))
               
-            )
+            
               ),IconButton(onPressed: (
   
 ){
   getimagefromgallery();
 }, icon: Icon(Icons.photo,color: const Color.fromARGB(255, 69, 75, 72),),
 iconSize: 30,),
-                 TextField(
+                 TextFormField(
+                   validator:  (value){
+                      if(value!.isEmpty){
+                        return "Product Name can not be empty";
+                      }
+                      return null;
+                    },
+                    
+                    onChanged: (value){
+                      ProductName = value as TextEditingController;
+                      setState(() {});
+
+                    },
                   cursorWidth: 3,
 
                           //controller: "dww",
@@ -207,7 +232,19 @@ iconSize: 30,),
                           ),
                         ),
                         SizedBox(height: 10),
-                        TextField(
+                        TextFormField(
+                           validator:  (value){
+                      if(value!.isEmpty){
+                        return "Product Type can not be empty";
+                      }
+                      return null;
+                    },
+                    
+                    onChanged: (value){
+                      ProductType = value as TextEditingController;
+                      setState(() {});
+
+                    },
                           //controller: nameController,
                           textAlign: TextAlign.left,
                           controller: ProductType,
@@ -229,7 +266,19 @@ iconSize: 30,),
                           ),
                         ),
                         SizedBox(height: 10),
-                         TextField(
+                         TextFormField(
+                           validator:  (value){
+                      if(value!.isEmpty){
+                        return "Product Price can not be empty";
+                      }
+                      return null;
+                    },
+                    
+                    onChanged: (value){
+                      ProductPrice = value as TextEditingController;
+                      setState(() {});
+
+                    },
                           //controller: nameController,
                           textAlign: TextAlign.left,
                           controller: ProductPrice,
@@ -250,8 +299,20 @@ focusedBorder: OutlineInputBorder(
                         ),
                         SizedBox(height: 10),
                         
-                         TextField(
-                          //controller: nameController,
+                         TextFormField(
+                           validator:  (value){
+                      if(value!.isEmpty){
+                        return "Product Expiry Date can not be empty";
+                      }
+                      return null;
+                    },
+                    
+                    onChanged: (value){
+                      ProductExpiryDate = value as TextEditingController;
+                      setState(() {});
+
+                    },
+                        
                           textAlign: TextAlign.left,
                           
                           controller: ProductExpiryDate,
@@ -275,8 +336,20 @@ focusedBorder: OutlineInputBorder(
  ),
                         ),
                         SizedBox(height: 10),
-                         TextField(
-                          //controller: nameController,
+                         TextFormField(
+                           validator:  (value){
+                      if(value!.isEmpty){
+                        return "Product Quantity can not be empty";
+                      }
+                      return null;
+                    },
+                    
+                    onChanged: (value){
+                      ProductQuantity = value as TextEditingController;
+                      setState(() {});
+
+                    },
+                          
                           textAlign: TextAlign.left,
                           controller: ProductQuantity,
                           decoration: InputDecoration(
@@ -299,10 +372,23 @@ focusedBorder: OutlineInputBorder(
                           ),
                         ),
                         SizedBox(height: 10),
-                        TextField(
-                          //controller: nameController,
+                        TextFormField(
+                          validator:  (value){
+                      if(value!.isEmpty){
+                        return "Product Description can not be empty";
+                      }
+                      return null;
+                    },
+                    
+                    onChanged: (value){
+                      ProductDescription = value as TextEditingController;
+                      setState(() {});
+
+                    },
+                          
                           textAlign: TextAlign.left,
                           controller: ProductDescription,
+                          
                           decoration: InputDecoration(
                             labelText: 'Product Description',
                             hintText: "Please Enter Product Description",
@@ -318,7 +404,9 @@ focusedBorder: OutlineInputBorder(
   contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 12.0),
   filled: true,
   fillColor: Colors.grey[200],
+  
                           ),
+                          
                         ),
                         SizedBox(height: 15,),
                          Row(
@@ -326,8 +414,9 @@ focusedBorder: OutlineInputBorder(
                           children: [
                             ElevatedButton(
                               onPressed: (){
-                                sendDataToFlask();
-                                 Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=> MyHomePage()));
+                                moveToHome(context);
+                                // sendDataToFlask();
+                                //  Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=> MyHomePage()));
                               
                               },
                               child: Text("Add Now!",style: TextStyle(color: Colors.black),),
@@ -348,9 +437,11 @@ focusedBorder: OutlineInputBorder(
         ],
       ),  
     
-    
+          )
         
+      )
+      )
       );
-    
+
   }
 }

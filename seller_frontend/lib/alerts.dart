@@ -35,6 +35,12 @@ class _AlertsState extends State<Alerts> {
 print(data);
         setState(() {
           products = List<Map<String, dynamic>>.from(data['data']);
+          for (var p in products){
+            if(p['Days']<=0){
+              print(p['ProductId']);
+            }
+
+          }
           isLoading = false; 
         });
       } else {

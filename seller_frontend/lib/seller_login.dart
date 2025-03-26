@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:selller/main.dart';
 import 'package:selller/seller_registration.dart';
+import 'package:http/http.dart'as http;
 
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +18,9 @@ class _LoginPageState extends State<LoginPage> {
   String name ="";
   bool changedButton = false;
   final _formkey = GlobalKey<FormState>();
+   final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
 
 moveToHome(BuildContext context)async{
    if(_formkey.currentState!.validate()){ 
@@ -24,22 +29,64 @@ moveToHome(BuildContext context)async{
 
 
       });
-      await Future.delayed(Duration(seconds: 1));
-      Navigator.pushReplacement(
+           final Map<String, String> data = {
+        'email': usernameController.text,
+        'password': passwordController.text,
+      };
+
+      // Send data to the backend
+      try {
+        final response = await http.post(
+          Uri.parse('http://192.168.100.239:5000/api/seller_login'), // Replace with your backend URL
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(data),
+        );
+
+        if (response.statusCode == 200) {
+          // Success
+          
+          print('Login successful');
+          Future.delayed(Duration.zero, () {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Login successful"), backgroundColor: Colors.green),
+            );
+          }
+        });
+
+           await Future.delayed(Duration(seconds: 2));
+
+          await Navigator.pushReplacement(
 context,
 MaterialPageRoute(builder: (context)=> MyHomePage()));
-      setState(() {
-        changedButton = false;
-      });
+        } else {
+          // Error
+          print('Login failed: ${response.body}');
+           ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text("Enter Valid Credentials"), backgroundColor: Colors.red),
+            );
+          
+         
+        }
+      } catch (e) {
+        print('Error: $e');
+       
+      } finally {
+        setState(() {
+          changedButton = false;
+        });
       }
+    }
+  }
 
-}
+     
+
+
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: SingleChildScrollView(
+    return Scaffold(  // Ensure a Scaffold is present
+    body: SingleChildScrollView(
         child:Form(
           key:_formkey,
         child: Column(
@@ -55,10 +102,11 @@ MaterialPageRoute(builder: (context)=> MyHomePage()));
               padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 32.0),
               child: Column(
                 children: [
-                  TextFormField(
+                   TextFormField(
+                    
                     decoration: const InputDecoration(
-                      hintText: "Enter Username",
-                      labelText: "Username",
+                      hintText: "Enter name",
+                      labelText: "Name",
                     ),
                     validator: (value){
                       if(value!.isEmpty){
@@ -73,7 +121,24 @@ MaterialPageRoute(builder: (context)=> MyHomePage()));
                     },
                   ),
                   const SizedBox(height: 20.0),
+           
                   TextFormField(
+                    controller: usernameController,
+                    decoration: const InputDecoration(
+                      hintText: "Enter email",
+                      labelText: "Email",
+                    ),
+                    validator: (value){
+                      if(value!.isEmpty){
+                        return "Email can not be empty";
+                      }
+                      return null;
+                    },
+                    
+                  ),
+                  const SizedBox(height: 20.0),
+                  TextFormField(
+                    controller: passwordController,
                     obscureText: true,
                     decoration: const InputDecoration(
                       hintText: "Enter Password",
@@ -83,7 +148,7 @@ MaterialPageRoute(builder: (context)=> MyHomePage()));
                       if(value!.isEmpty){
                         return "Password can not be empty";
                       }
-                      else if(value.length <6){
+                      else if(value.length <5){
                         return "Password can not be less than 6 characters";
                       }
                       return null;

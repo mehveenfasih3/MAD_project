@@ -17,6 +17,7 @@ import 'package:selller/seller_order.dart';
 import 'package:selller/seller_product.dart';
 //import 'package:file_picker/file_picker.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: scaffoldMessengerKey,
       title: 'Smart Supply' ,
       theme: ThemeData(
       ),
