@@ -142,7 +142,9 @@ def cv(image):
     print("Received image path: ", image)
     
    
-    image=cv2.imread('sample3.png')
+    image=cv2.imread(image)
+    image = cv2.resize(image, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+ 
 #     image = Image.open(image_path)
 
 # # Decode the barcode
@@ -195,6 +197,9 @@ def cv(image):
             break  
     else:
         print("No valid expiry date found.")
+
+# b=cv('sample3.png')
+# print(b)
 @app.route('/get_expiry', methods=['GET'])
 def get_expiry():
     
@@ -557,6 +562,34 @@ def get_product_sales():
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({'error': str(e)}), 500
+    
+
+
+
+
+# import numpy as np
+
+# def increase_resolution(image_path):
+#     img = cv2.imread(image_path)
+#     img = cv2.resize(img, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+#     return img
+
+# def extract_text(image_path):
+#     processed_img = increase_resolution(image_path)
+#     text = pytesseract.image_to_string(processed_img, config="--psm 6")
+#     return text
+
+# # ---- Replace with your actual image path ----
+# image_path = "sample3.png"
+# extracted_text = extract_text(image_path)
+# print("Extracted Text:\n", extracted_text)
+
+
+
+
+
+
+
 
 with app.app_context():
    

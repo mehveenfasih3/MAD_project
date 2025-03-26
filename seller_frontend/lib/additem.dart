@@ -92,6 +92,7 @@ MaterialPageRoute(builder: (context)=> MyHomePage()));
 print(data);
         setState(() {
           expirydate = data['expiry_date'];
+          ProductExpiryDate.text=expirydate;
           print("expiry date");
           print(expirydate);
         });
@@ -312,7 +313,7 @@ focusedBorder: OutlineInputBorder(
                       setState(() {});
 
                     },
-                        
+                        readOnly: true,
                           textAlign: TextAlign.left,
                           
                           controller: ProductExpiryDate,
@@ -320,7 +321,7 @@ focusedBorder: OutlineInputBorder(
                           decoration: InputDecoration(
                             labelText: "Expiry Date",
                             hintText: 'Enter Expiry Date',
-                            helperText: 'Hint: ${expirydate}',
+                            
                             border: OutlineInputBorder(
     borderRadius: BorderRadius.circular(12.0),
   ),

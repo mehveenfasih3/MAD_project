@@ -192,8 +192,8 @@ IconButton(onPressed: (
 iconSize: 30,),
   ]),
            ElevatedButton(
-                              onPressed: () {
-                                sendBarcodeDataToFlask(_selectedimage);
+                              onPressed: () async{
+                                await sendBarcodeDataToFlask(_selectedimage);
                                 Navigator.pushReplacement(context, MaterialPageRoute(builder:(context)=> additem()));
                               },
                               child: Text("Scan Now!",style: TextStyle(color: Colors.black),),
