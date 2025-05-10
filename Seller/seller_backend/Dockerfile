@@ -5,6 +5,8 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libmariadb-dev \
+    gcc \
+    python3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
