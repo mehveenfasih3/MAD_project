@@ -1,4 +1,4 @@
-# Use the official Python image
+
 FROM python:3.12-slim
 
 # Install system dependencies needed by mysqlclient and pyzbar
