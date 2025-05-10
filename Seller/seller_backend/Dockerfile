@@ -1,4 +1,4 @@
-
+# Use the official Python image
 FROM python:3.12-slim
 
 # Install system dependencies needed by mysqlclient and pyzbar
@@ -9,17 +9,6 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     zlib1g-dev \
     libzbar0 \
-    libopencv-dev \
-    libjpeg-dev \
-    libtiff-dev \
-    libpng-dev \
-    libjasper-dev \
-    libavcodec-dev \
-    libavformat-dev \
-    libswscale-dev \
-    libv4l-dev \
-    libxvidcore-dev \
-    libx264-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
