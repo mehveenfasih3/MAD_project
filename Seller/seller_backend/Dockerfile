@@ -1,12 +1,14 @@
 # Use the official Python image
 FROM python:3.12-slim
 
-# Install system dependencies needed by mysqlclient
+# Install system dependencies needed by mysqlclient and pyzbar
 RUN apt-get update && apt-get install -y \
     pkg-config \
     libmariadb-dev \
     gcc \
     python3-dev \
+    zlib1g-dev \
+    libzbar0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
