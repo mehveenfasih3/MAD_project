@@ -9,6 +9,17 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     zlib1g-dev \
     libzbar0 \
+    libopencv-dev \
+    libjpeg-dev \
+    libtiff-dev \
+    libpng-dev \
+    libjasper-dev \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libv4l-dev \
+    libxvidcore-dev \
+    libx264-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory inside the container
