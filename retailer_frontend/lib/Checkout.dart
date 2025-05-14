@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class CartPage extends StatefulWidget {
   @override
   _CartPageState createState() => _CartPageState();
@@ -12,8 +11,6 @@ String getDiscountedPrice(double price, double discountPercentage) {
   return discountedPrice.toStringAsFixed(2);
 }
 
-
-
   @override
   Widget build(BuildContext context) {
   double tax;
@@ -21,7 +18,6 @@ String getDiscountedPrice(double price, double discountPercentage) {
     
   List<dynamic> cartItems = ModalRoute.of(context)?.settings.arguments as List<dynamic>? ?? [];
   
-
   Map<String,double> calculateTotal() {
   double bill = cartItems.fold(0.0, (sum, item) => sum + (item.price - (item.price * item.discount / 100)),);
   tax=0.1*bill;
@@ -109,21 +105,28 @@ String getDiscountedPrice(double price, double discountPercentage) {
             // Checkout button
             ElevatedButton(
               onPressed: () {
-                // Create a map with total and cartItems
+  if (cartItems.isEmpty) {
+    // Show a snackbar message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Your cart is empty! Please add items before checking out.")
+      )
+    );
+  } else {
+    // Create a map with total and cartItems
     Map<String, dynamic> arguments = {
       "total": calculateTotal()["Total"],
       "cartItems": cartItems,
-
     };
 
     // Push to the payment page with the arguments
     Navigator.pushNamed(
       context,
       '/payment',
-      arguments: arguments,  // Passing the map containing both values
+      arguments: arguments,
     );
-               
-              },
+  }
+},
+
               child: Text('Checkout',style: TextStyle(fontWeight: FontWeight.bold,
               color: Colors.white
               )

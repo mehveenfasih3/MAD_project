@@ -11,19 +11,19 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/android.toolchain.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/android.toolchain.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/android-legacy.toolchain.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/android-legacy.toolchain.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/abis.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/abis.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/platforms.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/platforms.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -32,7 +32,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Android-Determine.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Android-Determine.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -45,7 +45,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/android.toolchain.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/android.toolchain.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -59,7 +59,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Android-Initialize.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Android-Initialize.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -83,7 +83,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Determine-Compiler.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Determine-Compiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -565,7 +565,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Android.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Android.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -624,11 +624,11 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Android-Clang.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Android-Clang.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/flags.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/flags.cmake"
 		},
 		{
 			"isCMake" : true,

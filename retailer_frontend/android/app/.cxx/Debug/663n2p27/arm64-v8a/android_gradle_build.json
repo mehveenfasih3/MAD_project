@@ -19,8 +19,8 @@
   "libraries": {},
   "toolchains": {
     "toolchain": {
-      "cCompilerExecutable": "E:\\Android sdk\\Sdk\\ndk\\android-ndk-r28b\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
-      "cppCompilerExecutable": "E:\\Android sdk\\Sdk\\ndk\\android-ndk-r28b\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
+      "cCompilerExecutable": "C:\\Users\\DELL\\AppData\\Local\\Android\\Sdk\\ndk\\28.1.13356709\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang.exe",
+      "cppCompilerExecutable": "C:\\Users\\DELL\\AppData\\Local\\Android\\Sdk\\ndk\\28.1.13356709\\toolchains\\llvm\\prebuilt\\windows-x86_64\\bin\\clang++.exe"
     }
   },
   "cFileExtensions": [],

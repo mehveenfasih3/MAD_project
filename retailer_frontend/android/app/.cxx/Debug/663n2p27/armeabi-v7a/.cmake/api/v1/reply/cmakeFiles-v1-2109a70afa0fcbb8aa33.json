@@ -11,19 +11,19 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/android.toolchain.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/android.toolchain.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/android-legacy.toolchain.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/android-legacy.toolchain.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/abis.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/abis.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/platforms.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/platforms.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -32,7 +32,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Android-Determine.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Android-Determine.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -41,11 +41,11 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/arm64-v8a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeSystem.cmake"
+			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/armeabi-v7a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeSystem.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/android.toolchain.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/android.toolchain.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -59,7 +59,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Android-Initialize.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Android-Initialize.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -83,7 +83,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Determine-Compiler.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Determine-Compiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -307,7 +307,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/arm64-v8a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeCCompiler.cmake"
+			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/armeabi-v7a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -541,7 +541,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/arm64-v8a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeCXXCompiler.cmake"
+			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/armeabi-v7a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeCXXCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -565,7 +565,7 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Android.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Android.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -624,11 +624,11 @@
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/hooks/pre/Android-Clang.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/hooks/pre/Android-Clang.cmake"
 		},
 		{
 			"isExternal" : true,
-			"path" : "E:/Android sdk/Sdk/ndk/android-ndk-r28b/build/cmake/flags.cmake"
+			"path" : "C:/Users/DELL/AppData/Local/Android/Sdk/ndk/28.1.13356709/build/cmake/flags.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -692,7 +692,7 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/arm64-v8a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeCCompiler.cmake"
+			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/armeabi-v7a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeCCompiler.cmake"
 		},
 		{
 			"isCMake" : true,
@@ -786,13 +786,13 @@
 		},
 		{
 			"isGenerated" : true,
-			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/arm64-v8a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeCXXCompiler.cmake"
+			"path" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/armeabi-v7a/CMakeFiles/3.22.1-g37088a8-dirty/CMakeCXXCompiler.cmake"
 		}
 	],
 	"kind" : "cmakeFiles",
 	"paths" : 
 	{
-		"build" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/arm64-v8a",
+		"build" : "E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/armeabi-v7a",
 		"source" : "E:/flutter/flutter/packages/flutter_tools/gradle/src/main/groovy"
 	},
 	"version" : 
