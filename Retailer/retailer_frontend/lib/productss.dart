@@ -156,7 +156,7 @@ class _ProductScreenState extends State<ProductScreen> {
                   SizedBox(height: padding),
 
                   Text(
-                    '${products.length} Results Found', // Dynamically show the number of products
+                   '${filteredProducts.length} Results Found', // Dynamically show the number of products
                     style: TextStyle(
                       fontSize: fontSize * 1.2,
                       fontWeight: FontWeight.bold,
@@ -198,9 +198,11 @@ quantity: (product['ProductQuantity'] is String)
                               productID: product['ProductId'],
                               imageUrl: product['ProductImage'],
                               title: product['ProductName'],
-                              price: double.parse(product['ProductPrice']) - 
-       (double.parse(product['ProductPrice']) * 
-        double.parse(product['ProductDiscount']) / 100),
+      //                         price: double.parse(product['ProductPrice']) - 
+      //  (double.parse(product['ProductPrice']) * 
+      //   double.parse(product['ProductDiscount']) / 100),
+                              price:double.parse(product['ProductPrice']),
+                              discount:double.parse(product['ProductDiscount']),
                               // price: double.parse(product['ProductPrice']-(product['ProductPrice']*product['ProductDiscount'])/100),
                               description: product['ProductDescription'],
                               
@@ -343,7 +345,7 @@ class ProductCard extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 1),
                 child: Text(
-                  ('No of ${title}:${quantity.toString()}'),
+                  ('No of ${title}:${quantity}'),
                   style: TextStyle(
                     fontSize: 12,
                     
@@ -370,7 +372,7 @@ class ProductCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      '${price.toStringAsFixed(2)}Rs',
+                      '${price}Rs',
                       style: TextStyle(
                         fontSize: fontSize * 1.0,
                         color: Colors.black,
@@ -380,7 +382,7 @@ class ProductCard extends StatelessWidget {
                     Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 1),
                 child: Text(
-                  ('${discount.toString()}% Off'),
+                  ('${discount}% Off'),
                   style: TextStyle(
                     fontSize: fontSize,
                     fontWeight: FontWeight.bold,
@@ -392,6 +394,8 @@ class ProductCard extends StatelessWidget {
                   ],
                 ),
               ),
+              Spacer(),
+          
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 1.0, vertical: 1),
                 child: Row(
@@ -434,6 +438,7 @@ class CartItem {
   final String title;
   final double price;
   final String description;
+  final double discount;
 
   CartItem({
     required this.productID,
@@ -441,5 +446,6 @@ class CartItem {
     required this.title,
     required this.price,
     required this.description,
+    required this.discount,
   });
 }

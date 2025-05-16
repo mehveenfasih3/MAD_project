@@ -259,8 +259,7 @@ def get_products():
         # cursor.execute(query)
         query = """SELECT *, DATE_FORMAT(ProductExpiryDate, '%%Y-%%m-%%d') AS FormattedExpiryDate, 
                    DATEDIFF(ProductExpiryDate, CURDATE()) AS Days 
-                   FROM product WHERE DATEDIFF(ProductExpiryDate, CURDATE())BETWEEN 1 AND 7 
-                   AND SellerId = %s;"""
+                   FROM product WHERE DATEDIFF(ProductExpiryDate, CURDATE())BETWEEN 1 AND 7 AND ProductPayment = False AND SellerId = %s;"""
 
         final_query = query.replace("%s", str(seller_id_global))  # Debugging
         print("Executing Query:", final_query)

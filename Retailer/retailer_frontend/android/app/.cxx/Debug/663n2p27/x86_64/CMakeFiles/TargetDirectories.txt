@@ -1,0 +1,2 @@
+E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/x86_64/CMakeFiles/edit_cache.dir
+E:/testing/MAD_project-kanza/MAD_project-kanza/Retailer (Supply Ease)/retailer_frontend/android/app/.cxx/Debug/663n2p27/x86_64/CMakeFiles/rebuild_cache.dir

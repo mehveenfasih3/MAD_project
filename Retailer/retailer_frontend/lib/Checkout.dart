@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
-
 class CartPage extends StatefulWidget {
   @override
   _CartPageState createState() => _CartPageState();
 }
 
 class _CartPageState extends State<CartPage> {
-
-
+String getDiscountedPrice(double price, double discountPercentage) {
+  double discountedPrice = price - (price * discountPercentage / 100);
+  return discountedPrice.toStringAsFixed(2);
+}
 
   @override
   Widget build(BuildContext context) {
@@ -17,9 +18,8 @@ class _CartPageState extends State<CartPage> {
     
   List<dynamic> cartItems = ModalRoute.of(context)?.settings.arguments as List<dynamic>? ?? [];
   
-
   Map<String,double> calculateTotal() {
-  double bill = cartItems.fold(0.0, (sum, item) => sum + item.price);
+  double bill = cartItems.fold(0.0, (sum, item) => sum + (item.price - (item.price * item.discount / 100)),);
   tax=0.1*bill;
   total=bill+tax;
   Map<String,double> finalbill={"Tax":tax,"Total":total};
@@ -59,7 +59,28 @@ class _CartPageState extends State<CartPage> {
   return ListTile(
     leading: Image.network(product.imageUrl, height: 20, width: 20),  // Access imageUrl from the CartItem
     title: Text(product.title),  // Access title from the CartItem
-    subtitle: Text('Price: ${product.price}Rs'),  // Access price from the CartItem
+    // subtitle: Text('Price: ${product.price}Rs'),  // Access price from the CartItem
+    subtitle: Text.rich(
+  TextSpan(
+    children: [
+      TextSpan(
+        text: 'Price: ',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      TextSpan(
+        text: '${product.price}Rs  ',
+        style: TextStyle(
+          color: Colors.red,
+          decoration: TextDecoration.lineThrough, // strike-through
+        ),
+      ),
+      TextSpan(
+        text: '${getDiscountedPrice(product.price, product.discount)}Rs',
+        style: TextStyle(color: Colors.green),
+      ),
+    ],
+  ),
+),
   );
 },
 
@@ -84,21 +105,28 @@ class _CartPageState extends State<CartPage> {
             // Checkout button
             ElevatedButton(
               onPressed: () {
-                // Create a map with total and cartItems
+  if (cartItems.isEmpty) {
+    // Show a snackbar message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Your cart is empty! Please add items before checking out.")
+      )
+    );
+  } else {
+    // Create a map with total and cartItems
     Map<String, dynamic> arguments = {
       "total": calculateTotal()["Total"],
       "cartItems": cartItems,
-
     };
 
     // Push to the payment page with the arguments
     Navigator.pushNamed(
       context,
       '/payment',
-      arguments: arguments,  // Passing the map containing both values
+      arguments: arguments,
     );
-               
-              },
+  }
+},
+
               child: Text('Checkout',style: TextStyle(fontWeight: FontWeight.bold,
               color: Colors.white
               )

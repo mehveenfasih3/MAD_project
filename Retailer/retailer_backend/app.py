@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask,render_template, request,jsonify
+from flask_cors import CORS
 from flask_mysqldb import MySQL
 from collections import defaultdict
 from datetime import datetime
-from flask_cors import CORS
 import cloudinary
 import cloudinary.uploader
 from dotenv import load_dotenv
@@ -13,10 +13,11 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)  # This will enable CORS for all routes
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = '23sep2004'
-app.config['MYSQL_DB'] = 'smart supply'
+app.config['MYSQL_HOST'] = os.getenv('DB_HOST')
+app.config['MYSQL_USER'] = os.getenv('DB_USER')
+app.config['MYSQL_PORT'] = int(os.getenv('DB_PORT'))
+app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASS')
+app.config['MYSQL_DB'] = os.getenv('DB_NAME')
  
 mysql = MySQL(app)
 print(mysql)
@@ -243,4 +244,3 @@ def place_order():
     
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-

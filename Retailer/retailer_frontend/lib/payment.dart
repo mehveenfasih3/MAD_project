@@ -17,7 +17,7 @@ class _PaymentPageState extends State<PaymentPage> {
   int? retailerId;
   String? retailerName;
   String? retailerEmail;
-
+  TextEditingController _amountController = TextEditingController();
   // Simulate the payment process
   var responcePrice;
   bool isLoading = false;
@@ -220,64 +220,22 @@ class _PaymentPageState extends State<PaymentPage> {
             fontWeight: FontWeight.bold,
           ),
                ),
-            SizedBox(height: 20),
-            TextFormField(
-              validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'This field is required';
-          }
-          return null; 
-        },
-              canRequestFocus: true,
+  //           SizedBox(height: 20),
+            TextField(
+              controller: _amountController, // Use the controller to bind the amount field
               decoration: InputDecoration(
-                labelText: 'Card Number',
+
+                labelText: totalAmount.toStringAsFixed(2),
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
+              enabled: false, // Disable the input since it's pre-filled
             ),
-            SizedBox(height: 10),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'Expiry Date (MM/YY)',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'This field is required';
-          }
-          return null; // ✅ No error if input is valid
-        },
-              keyboardType: TextInputType.datetime,
-            ),
-            SizedBox(height: 10),
-            TextFormField(
-              decoration: InputDecoration(
-                labelText: 'CVV',
-                border: OutlineInputBorder(),
-                
-              ),
-              keyboardType: TextInputType.number,
-               validator:  (value){
-                      if(value!.isEmpty){
-                        return "Feild can not be empty";
-                      }
-                      return null;
-                    },
-                    
-                   
-            ),
+            
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-              if ( _formkey.currentState!.validate()) {
-            // ✅ Form is valid, proceed with action
-            print("Form is valid");
-             processPayment(context);
-          }
-      
-              },
-              
-              child: Text('Pay Now (${totalAmount.toStringAsFixed(2)})Rs',style: TextStyle(color: Colors.white),),
+              onPressed: () => processPayment(context),
+              child: Text('Pay Now (\$${totalAmount.toStringAsFixed(2)})'),
               style: ElevatedButton.styleFrom(
                 padding: EdgeInsets.symmetric(vertical: 16.0),
                 minimumSize: Size(double.infinity, 50),
@@ -287,8 +245,8 @@ class _PaymentPageState extends State<PaymentPage> {
           ],
         ),
       ),
-        )
+    )
       )
     );
-  }}
-  
+  }
+}
